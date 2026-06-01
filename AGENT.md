@@ -33,6 +33,7 @@ cortexverse/
 ├── workflows/               # [Orchestration] The Game Loop (episode_loop.py)
 ├── infrastructure/          # [External] LLM clients, ComfyUI adapters, Database repositories
 ├── interfaces/              # [API] FastAPI routes and Background Task workers
+├── docs/                    # [Documents] PRD、架构设计、技术方案等项目文档
 └── main.py                  # Entry point
 
 ```

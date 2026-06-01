@@ -74,3 +74,6 @@ docker-compose.override.yml
 .terraform/
 *.tfstate
 *.tfstate.backup
+
+# === 文档 ===
+docs/
