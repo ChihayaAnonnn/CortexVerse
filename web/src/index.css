@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* 赛博朋克风格变量 */
+:root {
+  --cyber-bg: #0a0a0f;
+  --cyber-surface: #12121a;
+  --cyber-border: #1e1e2e;
+  --cyber-green: #00ff88;
+  --cyber-orange: #ff6b35;
+  --cyber-purple: #a855f7;
+  --cyber-blue: #06b6d4;
+  --cyber-text: #e0e0e0;
+  --cyber-text-dim: #6b7280;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--cyber-bg);
+  color: var(--cyber-text);
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* 标题字体 */
+.font-orbitron {
+  font-family: 'Orbitron', monospace;
+}
+
+/* 霓虹发光效果 */
+.neon-green {
+  color: var(--cyber-green);
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.neon-orange {
+  color: var(--cyber-orange);
+  text-shadow: 0 0 10px rgba(255, 107, 53, 0.5), 0 0 20px rgba(255, 107, 53, 0.3);
+}
+
+/* 卡片玻璃效果 */
+.glass-card {
+  background: rgba(18, 18, 26, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--cyber-border);
+  border-radius: 12px;
+}
+
+/* 阶段指示器动画 */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px var(--cyber-green), 0 0 10px var(--cyber-green); }
+  50% { box-shadow: 0 0 10px var(--cyber-green), 0 0 20px var(--cyber-green), 0 0 30px var(--cyber-green); }
+}
+
+.phase-active {
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cyber-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cyber-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cyber-text-dim);
+}

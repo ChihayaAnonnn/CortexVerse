@@ -38,6 +38,10 @@ out/
 *.tsbuildinfo
 next-env.d.ts
 
+# Vite
+web/dist/
+web/node_modules/
+
 # === 环境配置 ===
 .env
 .env.local
