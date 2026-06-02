@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, Field
 
-from cortexverse.domain.world_asset import WorldAsset
+from cortexverse.domain.world.world_asset import WorldAsset
 
 
 class WorldGenerateRequest(BaseModel):

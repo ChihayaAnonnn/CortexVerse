@@ -37,9 +37,10 @@ CortexVerse/
 │   └── llm_providers.yaml       # LLM Provider 配置（type、base_url、api_key_env）
 ├── cortexverse/
 │   ├── domain/                  # 纯数据层 — Pydantic 模型，不含业务逻辑
-│   │   ├── macro.py             #   MacroState（Philosophy、History、Growth）
-│   │   ├── micro.py             #   MicroFaction/Character/Resource/Conflict/PowerTier/Location
-│   │   └── world_asset.py       #   WorldAsset 聚合根 + 关系校验
+│   │   └── world/               #   世界观领域模型子包
+│   │       ├── macro.py         #     MacroState（Philosophy、History、Growth）
+│   │       ├── micro.py         #     MicroFaction/Character/Resource/Conflict/PowerTier/Location
+│   │       └── world_asset.py   #     WorldAsset 聚合根 + 关系校验
 │   ├── agents/
 │   │   ├── _schema_bindings.py  # Schema 注册声明（导入即注册到 SCHEMA_REGISTRY）
 │   │   ├── world_builder/
@@ -53,7 +54,11 @@ CortexVerse/
 │   │   ├── agent_factory/       # Agent 工厂（配置驱动 + Schema 注册表 + Prompt 渲染）
 │   │   ├── llm_clients/         # LLM 客户端工厂（BaseLLMClient → OpenAICompatibleClient）
 │   │   ├── media_adapters/      # ComfyUI/TTS 适配器（待实现）
-│   │   └── repositories/        # 数据库 Repository（待实现）
+│   │   └── repositories/        # 数据库 Repository
+│   │       ├── database.py      #     SQLAlchemy Async 引擎与会话管理
+│   │       └── world/           #     世界观数据访问子包
+│   │           ├── models.py    #       ORM 模型（10 张表，含 to_domain/from_domain 转换）
+│   │           └── repo.py      #       WorldAssetRepository（save/get/list/delete）
 │   ├── interfaces/              # API 层 — FastAPI 路由
 │   ├── docs/                    # 项目文档（PRD、架构设计）
 │   └── main.py                  # FastAPI 入口

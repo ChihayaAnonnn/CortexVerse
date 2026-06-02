@@ -1,7 +1,9 @@
-"""数据访问层。"""
+"""世界观数据访问子包。
 
-from cortexverse.infrastructure.repositories.database import DatabaseClient, get_db_client
-from cortexverse.infrastructure.repositories.world import (
+导出 ORM 模型、仓储和基类。
+"""
+
+from cortexverse.infrastructure.repositories.world.models import (
     Base,
     MacroGrowthRow,
     MacroHistoryRow,
@@ -12,13 +14,12 @@ from cortexverse.infrastructure.repositories.world import (
     MicroLocationRow,
     MicroPowerTierRow,
     MicroResourceRow,
-    WorldAssetRepository,
     WorldAssetRow,
 )
+from cortexverse.infrastructure.repositories.world.repo import WorldAssetRepository
 
 __all__ = [
     "Base",
-    "DatabaseClient",
     "MacroGrowthRow",
     "MacroHistoryRow",
     "MacroPhilosophyRow",
@@ -30,5 +31,4 @@ __all__ = [
     "MicroResourceRow",
     "WorldAssetRepository",
     "WorldAssetRow",
-    "get_db_client",
 ]

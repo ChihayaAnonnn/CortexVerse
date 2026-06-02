@@ -6,6 +6,8 @@ from loguru import logger
 from pydantic_settings import BaseSettings
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from cortexverse.infrastructure.repositories.world.models import Base
+
 # 项目根目录
 _ROOT_DIR = Path(__file__).resolve().parents[3]
 
@@ -62,6 +64,16 @@ class DatabaseClient:
         """关闭数据库引擎，释放所有连接。"""
         await self._engine.dispose()
         logger.info("数据库连接已关闭")
+
+    async def init_db(self) -> None:
+        """初始化数据库表结构。
+
+        基于 ORM 模型的 Base.metadata 创建所有表。
+        适用于开发环境快速建表，生产环境建议使用 Alembic 迁移。
+        """
+        async with self._engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        logger.info("数据库表初始化完成")
 
 
 # 全局单例

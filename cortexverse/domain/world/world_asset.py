@@ -2,8 +2,8 @@
 
 from pydantic import BaseModel, Field, model_validator
 
-from cortexverse.domain.macro import MacroGrowthOverview, MacroHistory, MacroPhilosophy
-from cortexverse.domain.micro import (
+from cortexverse.domain.world.macro import MacroGrowthOverview, MacroHistory, MacroPhilosophy
+from cortexverse.domain.world.micro import (
     MicroCharacter,
     MicroConflictNode,
     MicroFaction,
