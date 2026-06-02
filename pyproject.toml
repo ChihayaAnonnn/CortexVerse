@@ -12,7 +12,7 @@ dependencies = [
 
     # LLM 集成
     "instructor>=1.7.0",
-    "litellm>=1.50.0",
+    "openai>=1.60.0",
 
     # 数据库
     "sqlalchemy[asyncio]>=2.0.36",

@@ -1,6 +1,6 @@
 """微观原子数据层（MICRO）— 为下游状态机和多模态引擎提供可计算的硬指标。"""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class MicroFaction(BaseModel):
@@ -77,3 +77,38 @@ class MicroLocationNode(BaseModel):
         description="高度原子化的纯英文视觉 Tag。后续无缝透传给 ComfyUI 渲染。不得出现长句叙述。"
         "例如：'rusty metallic dust, dark neon cyber, dense oppressive grey fog'。",
     )
+
+
+# ====== 【针对 Geography Agent 的专用响应容器】 ======
+class GeographyState(BaseModel):
+    """地理精算师 Agent 的直接输出 Schema"""
+    micro_locations: list[MicroLocationNode] = Field(
+        min_items=3, max_items=8, description="根据宏观背景切分的具象物理区域节点列表"
+    )
+
+# ====== 【针对 Economy Agent 的专用响应容器】 ======
+class EconomyState(BaseModel):
+    """阶级与社会精算师 Agent 的直接输出 Schema"""
+    micro_hierarchy: list[MicroPowerTier] = Field(description="战力与社会阶层精算大表，必须包含从底层到高层的完整梯度")
+    micro_resources: list[MicroResource] = Field(description="引发地缘冲突的核心经济原子资产")
+    micro_factions: list[MicroFaction] = Field(description="割据世界的政治、宗门或财阀派系")
+    micro_characters: list[MicroCharacter] = Field(description="作为世界观具象载体的初始核心角色")
+
+    @model_validator(mode='after')
+    def validate_internal_economy(self):
+        """局部内聚校验：在社会学阶段就熔断错乱的外键"""
+        faction_ids = {f.faction_id for f in self.micro_factions}
+        resource_ids = {r.resource_id for r in self.micro_resources}
+        rank_levels = {p.rank for p in self.micro_hierarchy}
+
+        for char in self.micro_characters:
+            if char.affiliation_faction_id not in faction_ids:
+                raise ValueError(f"角色 {char.character_id} 归属了不存在的势力 {char.affiliation_faction_id}")
+            if char.current_tier_rank not in rank_levels:
+                raise ValueError(f"角色 {char.character_id} 的级别在阶层表中未定义")
+        return self
+
+# ====== 【针对 Conflict Agent 的专用响应容器】 ======
+class ConflictState(BaseModel):
+    """冲突编排师 Agent 的直接输出 Schema"""
+    micro_conflicts: list[MicroConflictNode] = Field(description="核心地缘政治与利益对立冲突节点网络")

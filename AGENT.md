@@ -14,7 +14,7 @@ Read this carefully before generating ANY code:
 ## 🛠️ Technology Stack
 * **Language:** Python 3.10+
 * **Data Modeling:** `pydantic v2`
-* **LLM Gateway & Validation:** `instructor`, `litellm` (or direct API SDKs via unified interface)
+* **LLM Gateway & Validation:** `instructor` + 原生 SDK 直连（`openai` 等，工厂模式支持多 provider）
 * **Async Engine:** Native Python `asyncio`
 * **Media Layer (L5):** Async HTTP/WebSocket calls to ComfyUI (with IP-Adapter/FaceID) and TTS APIs (CosyVoice/F5-TTS).
 * **Storage:** PostgreSQL (via SQLAlchemy 2.0 with heavy use of JSONB) + Redis (for high-frequency state caching).

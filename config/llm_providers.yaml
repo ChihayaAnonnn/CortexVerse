@@ -1,0 +1,12 @@
+# config/llm_providers.yaml
+# LLM Provider 定义。api_key_env 指向环境变量名。
+
+openai:
+  type: openai
+  base_url: "https://api.openai.com/v1"
+  api_key_env: "OPENAI_API_KEY"
+
+deepseek:
+  type: openai
+  base_url: "https://api.deepseek.com"
+  api_key_env: "DEEPSEEK_API_KEY"

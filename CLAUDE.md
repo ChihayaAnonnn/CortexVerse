@@ -17,7 +17,7 @@ CortexVerse 是一个系统驱动的虚拟内容生产线（Synthetic Content Pi
 - **Language**: Python 3.10+（推荐 3.12+）
 - **Package Manager**: `uv`
 - **Data Modeling**: Pydantic v2
-- **LLM Gateway**: `instructor` + `litellm`（所有 LLM 调用必须结构化并经 Pydantic 验证）
+- **LLM Gateway**: `instructor` + 原生 SDK 直连（`openai` 等，通过工厂模式支持多 provider）
 - **Async Engine**: 原生 Python `asyncio`
 - **API Framework**: FastAPI
 - **Task Queue**: ARQ（Async Redis Queue）

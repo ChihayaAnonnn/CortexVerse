@@ -37,3 +37,10 @@ class MacroGrowthOverview(BaseModel):
     desire_anchor: str = Field(
         description="整个世界里几乎所有人都在追逐的梦幻泡影或终极特权。例如：'上城区的永久居住权'、'飞升仙界的通票'。"
     )
+
+# ====== 【新增：针对 Macro Agent 的专用响应容器】 ======
+class MacroState(BaseModel):
+    """宏观架构师 Agent 的直接输出 Schema"""
+    macro_philosophy: MacroPhilosophy
+    macro_history: MacroHistory
+    macro_growth: MacroGrowthOverview
