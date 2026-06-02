@@ -4,9 +4,10 @@ import { BUILD_PHASES, type BuildPhase } from '../types/world'
 
 interface LoadingPhasesProps {
   currentPhase: BuildPhase
+  currentStep?: number
 }
 
-export function LoadingPhases({ currentPhase }: LoadingPhasesProps) {
+export function LoadingPhases({ currentPhase, currentStep = 0 }: LoadingPhasesProps) {
   const currentIndex = BUILD_PHASES.findIndex((p) => p.key === currentPhase)
 
   return (
@@ -17,8 +18,9 @@ export function LoadingPhases({ currentPhase }: LoadingPhasesProps) {
 
       <div className="space-y-4">
         {BUILD_PHASES.map((phase, index) => {
+          const stepNumber = index + 1
           const isActive = index === currentIndex
-          const isCompleted = index < currentIndex
+          const isCompleted = stepNumber <= currentStep
 
           return (
             <div

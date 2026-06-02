@@ -2,7 +2,11 @@
 
 from fastapi import FastAPI
 
+from cortexverse.infrastructure.logging import setup_logging
 from cortexverse.interfaces.api import router as api_router
+
+# 初始化日志系统
+setup_logging()
 
 
 def create_app() -> FastAPI:

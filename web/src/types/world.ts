@@ -118,3 +118,32 @@ export const BUILD_PHASES: PhaseInfo[] = [
   { key: 'economy_subagent', label: '经济社会', description: '设计阶层、资源、势力与角色', icon: '⚔️' },
   { key: 'conflict_subagent', label: '冲突编排', description: '编排核心矛盾与导火索事件', icon: '🔥' },
 ]
+
+// ====== 阶段结果 ======
+
+export interface PhaseResult {
+  phase: BuildPhase
+  step: number
+  result: Record<string, unknown>
+}
+
+// ====== SSE 事件数据 ======
+
+export interface SSEPhaseStart {
+  phase: string
+  step: number
+}
+
+export interface SSEPhaseComplete {
+  phase: string
+  step: number
+  result: Record<string, unknown>
+}
+
+export interface SSEWorldComplete {
+  world_asset: WorldAsset
+}
+
+export interface SSEWorldFailed {
+  error: string
+}

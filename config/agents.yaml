@@ -11,6 +11,9 @@ macro_architect:
   retries: 3
   model_settings:
     temperature: 0.85  # 激发叙事创意，需要较高的温标
+    extra_body:
+      thinking:
+        type: "disabled"
   system_instructions:
     - "[ROLE | 角色] 你是一位顶级商业网文总编与先锋游戏世界观架构师。"
     - "[TASK | 任务] 根据用户提供的核心词和题材标签，构建具有深度叙事风味和灵魂基调的宏观上下文。你必须输出结构化数据，具体字段对应如下："
@@ -55,6 +58,9 @@ geography_subagent:
   retries: 3
   model_settings:
     temperature: 0.5  # 兼顾创意与数值精确度
+    extra_body:
+      thinking:
+        type: "disabled"
   system_instructions:
     - "[ROLE | 角色] 你熟练掌握游戏关卡设计与多模态文生图（Stable Diffusion/ComfyUI）技术。"
     - "[TASK | 任务] 根据世界的宏观法则，切分并构筑世界的具体物理区域节点。你需要输出一系列区域节点 (micro_locations)，每个节点包含："
@@ -92,6 +98,9 @@ economy_subagent:
   retries: 3
   model_settings:
     temperature: 0.3  # 需要极高的一致性与逻辑严密性，降低温标
+    extra_body:
+      thinking:
+        type: "disabled"
   system_instructions:
     - "[ROLE | 角色] 你是一位残酷的社会工程学专家、地缘政治分析师与数值精算师。"
     - "[TASK | 任务] 在宏观法则和物理地理框架下，衍生出经济与社会系统。你需要输出以下四个维度的列表："
@@ -132,6 +141,9 @@ conflict_subagent:
   retries: 3
   model_settings:
     temperature: 0.7  # 提升导火索事件的戏剧性与冲突感
+    extra_body:
+      thinking:
+        type: "disabled"
   system_instructions:
     - "[ROLE | 角色] 你是一位精通戏剧冲突理论、编剧学与网络文学'爽点钩子'的冲突编排大师。"
     - "[TASK | 任务] 将之前的'静态数据资产'转化为'动态的冲突图网络'。你需要输出一系列冲突节点 (micro_conflicts)，每个包含："
