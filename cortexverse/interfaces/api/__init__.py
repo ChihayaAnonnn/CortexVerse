@@ -2,7 +2,11 @@
 
 from fastapi import APIRouter
 
+from cortexverse.interfaces.api.world import router as world_router
+
 router = APIRouter()
+
+router.include_router(world_router, prefix="/world", tags=["world"])
 
 
 @router.get("/health")

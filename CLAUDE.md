@@ -14,10 +14,11 @@ CortexVerse 是一个系统驱动的虚拟内容生产线（Synthetic Content Pi
 
 ## Tech Stack
 
-- **Language**: Python 3.10+（推荐 3.12+）
+- **Language**: Python 3.12+
+- **Docs**: `cortexverse/docs/` 存放 PRD 和架构设计文档
 - **Package Manager**: `uv`
 - **Data Modeling**: Pydantic v2
-- **LLM Gateway**: `instructor` + `litellm`（所有 LLM 调用必须结构化并经 Pydantic 验证）
+- **LLM Gateway**: `instructor` + 原生 SDK 直连（`openai` 等，通过 `LLMClientFactory` 工厂模式支持多 provider）
 - **Async Engine**: 原生 Python `asyncio`
 - **API Framework**: FastAPI
 - **Task Queue**: ARQ（Async Redis Queue）
@@ -30,30 +31,70 @@ CortexVerse 是一个系统驱动的虚拟内容生产线（Synthetic Content Pi
 ## Project Structure
 
 ```
-cortexverse/
-├── domain/                  # 纯数据层 — Pydantic 模型（World、Character、Narrative、Script），不含 LLM 逻辑
-├── agents/                  # 推理层 — 无状态异步函数（Node），输入 State → 输出更新后的 State
-│   ├── world_builder/
-│   ├── character_engine/
-│   ├── narrative_planner/
-│   └── script_translator/
-├── workflows/               # 编排层 — Game Loop（episode_loop.py）
-├── infrastructure/          # 外部集成 — LLM 客户端、ComfyUI 适配器、数据库 Repository
-├── interfaces/              # API 层 — FastAPI 路由和后台任务 Worker
-└── main.py                  # 入口
+CortexVerse/
+├── config/
+│   ├── agents.yaml              # Agent 配置（model、provider、prompt 模板、model_settings）
+│   └── llm_providers.yaml       # LLM Provider 配置（type、base_url、api_key_env）
+├── cortexverse/
+│   ├── domain/                  # 纯数据层 — Pydantic 模型，不含业务逻辑
+│   │   └── world/               #   世界观领域模型子包
+│   │       ├── macro.py         #     MacroState（Philosophy、History、Growth）
+│   │       ├── micro.py         #     MicroFaction/Character/Resource/Conflict/PowerTier/Location
+│   │       └── world_asset.py   #     WorldAsset 聚合根 + 关系校验
+│   ├── agents/
+│   │   ├── _schema_bindings.py  # Schema 注册声明（导入即注册到 SCHEMA_REGISTRY）
+│   │   ├── world_builder/
+│   │   ├── character_engine/
+│   │   ├── narrative_planner/
+│   │   └── script_translator/
+│   ├── workflows/               # 编排层
+│   │   ├── world_gen.py         #   世界构建编排器（含 refine 循环）
+│   │   └── episode_loop.py      #   剧集生成 Game Loop
+│   ├── infrastructure/
+│   │   ├── agent_factory/       # Agent 工厂（配置驱动 + Schema 注册表 + Prompt 渲染）
+│   │   ├── llm_clients/         # LLM 客户端工厂（BaseLLMClient → OpenAICompatibleClient）
+│   │   ├── media_adapters/      # ComfyUI/TTS 适配器（待实现）
+│   │   └── repositories/        # 数据库 Repository
+│   │       ├── database.py      #     SQLAlchemy Async 引擎与会话管理
+│   │       └── world/           #     世界观数据访问子包
+│   │           ├── models.py    #       ORM 模型（10 张表，含 to_domain/from_domain 转换）
+│   │           └── repo.py      #       WorldAssetRepository（save/get/list/delete）
+│   ├── interfaces/              # API 层 — FastAPI 路由
+│   ├── docs/                    # 项目文档（PRD、架构设计）
+│   └── main.py                  # FastAPI 入口
+├── scripts/                     # 工具脚本
+└── tests/                       # 测试
 ```
 
 ## Agent 编写模式
 
-`agents/` 中的 Agent 不是复杂类层次，而是无状态异步函数：
+### Schema 注册
+
+每个 Agent 的输出模型通过 `@register_schema` 装饰器注册到 `SCHEMA_REGISTRY`，声明集中在 `agents/_schema_bindings.py`：
 
 ```python
-async def run_planner_node(current_state: WorldState) -> WorldState:
-    # 1. 从 current_state 准备上下文
-    # 2. 通过 instructor 调用 LLM 获取结构化更新
-    # 3. 将更新应用到 current_state
-    # 4. 返回 current_state
+# agents/_schema_bindings.py
+register_schema("macro_architect")(MacroState)
+register_schema("economy_subagent", many=True)(MicroPowerTier)
 ```
+
+### 配置驱动
+
+Agent 的行为由 `config/agents.yaml` 定义，包括 provider、model、retries、model_settings、system_instructions、user_prompt_templates。Prompt 模板支持 `${var}` 变量渲染。
+
+### 执行模式
+
+`CortexAgent` 是工厂产出的无状态可执行体，`run()` 为单次纯推理：
+
+```python
+factory = AgentFactory.from_config()
+agent = factory.create_agent("macro_architect")
+result = await agent.run("generate", genre_tags=["修仙"], creative_intent="...")
+```
+
+### LLM 客户端
+
+`LLMClientFactory` 根据 `config/llm_providers.yaml` 创建 instructor 客户端，支持多 provider（OpenAI、DeepSeek 等）。API Key 从环境变量读取，客户端实例按 provider 缓存。
 
 ## 关键约束
 
@@ -61,6 +102,7 @@ async def run_planner_node(current_state: WorldState) -> WorldState:
 - **禁止引入** LangChain、LangGraph、AutoGen、CrewAI；需要图路由时用 `while` + `match/case` 实现
 - 多模态一致性：角色的 `visual_seed` / `character_face_id` 必须显式传递，Media Adapter（L5）依赖这些引用维持角色一致性
 - LLM 调用统一通过 `instructor`，输出必须是符合 Pydantic schema 的 JSON
+- `config/agents.yaml` 的 key 集合必须与 `SCHEMA_REGISTRY` 严格一致，`AgentFactory.from_config()` 启动时断言
 
 ## Coding Conventions
 
@@ -76,7 +118,7 @@ async def run_planner_node(current_state: WorldState) -> WorldState:
 # 从 Redis 缓存中获取用户 session
 ```
 
-### Python 风格（Google Python Style Guide）
+### Python 风格（Google Python Style Guide，Python 3.12+）
 
 - **缩进**: 4 空格，禁止 Tab
 - **行长**: 最大 120 字符
