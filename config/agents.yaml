@@ -6,6 +6,7 @@
 # 1. 宏观架构师 (Macro Architect) - 负责确立核心精神、前史与灵魂基调
 # ---------------------------------------------------------------------
 macro_architect:
+  provider: "deepseek"
   model: "deepseek-v4-pro"
   retries: 3
   model_settings:
@@ -49,6 +50,7 @@ macro_architect:
 # 2. 地理精算师 (Geography SubAgent) - 负责物理地图节点与 ComfyUI 视觉 Tag 生成
 # ---------------------------------------------------------------------
 geography_subagent:
+  provider: "deepseek"
   model: "deepseek-v4-pro"
   retries: 3
   model_settings:
@@ -85,6 +87,7 @@ geography_subagent:
 # 3. 阶级与社会精算师 (Economy SubAgent) - 负责社会学、阵营割据与初始角色构建
 # ---------------------------------------------------------------------
 economy_subagent:
+  provider: "deepseek"
   model: "deepseek-v4-pro"
   retries: 3
   model_settings:
@@ -124,6 +127,7 @@ economy_subagent:
 # 4. 冲突编排师 (Conflict SubAgent) - 负责提取剧情矛盾、爽点事件导火索
 # ---------------------------------------------------------------------
 conflict_subagent:
+  provider: "deepseek"
   model: "deepseek-v4-pro"
   retries: 3
   model_settings:
