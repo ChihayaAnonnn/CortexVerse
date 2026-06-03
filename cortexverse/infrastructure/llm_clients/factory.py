@@ -9,7 +9,7 @@ import yaml
 from cortexverse.infrastructure.llm_clients.base import BaseLLMClient
 from cortexverse.infrastructure.llm_clients.openai_client import OpenAICompatibleClient
 
-_DEFAULT_PROVIDERS_PATH = Path(__file__).resolve().parents[3] / "config" / "llm_providers.yaml"
+_DEFAULT_PROVIDERS_PATH = Path(__file__).resolve().parents[3] / "configs" / "llm_providers.yaml"
 
 # provider type → 客户端类映射
 _CLIENT_TYPES: dict[str, type[BaseLLMClient]] = {

@@ -32,9 +32,11 @@ CortexVerse 是一个系统驱动的虚拟内容生产线（Synthetic Content Pi
 
 ```
 CortexVerse/
-├── config/
-│   ├── agents.yaml              # Agent 配置（model、provider、prompt 模板、model_settings）
-│   └── llm_providers.yaml       # LLM Provider 配置（type、base_url、api_key_env）
+├── configs/                     # 配置与资产层（热更新友好，禁止放 Python 代码）
+│   ├── agents/                  #   Agent 人才库的元数据定义
+│   │   └── agents.yaml          #     Agent 配置（model、provider、prompt 模板、model_settings）
+│   ├── prompts/                 #   核心 Base System Prompts
+│   └── llm_providers.yaml       #   LLM Provider 配置（type、base_url、api_key_env）
 ├── cortexverse/
 │   ├── domain/                  # 纯数据层 — Pydantic 模型，不含业务逻辑
 │   │   ├── agent/               #   Agent 领域模型子包

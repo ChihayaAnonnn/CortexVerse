@@ -1,0 +1,51 @@
+# =====================================================================
+# CortexVerse SubAgent 元数据配置 - 宏观架构师
+# =====================================================================
+agent_id: "macro_architect"
+name: "宏观架构师"
+version: "1.0.0"
+
+# 给 Coordinator 团队编排时阅读的“履历简历”
+description: >
+  负责确立故事或游戏世界的全貌、精神内核、主要矛盾与前史基调。
+  能够基于原始的核心词与标签，输出具有强烈戏剧冲突的世界观宏观矩阵。
+
+# 物理运行控制
+provider: "deepseek"
+model: "deepseek-v4-pro"
+retries: 3
+model_settings:
+  temperature: 0.85
+  extra_body:
+    thinking:
+      type: "disabled"
+
+# 隔离出来的提示词文件路径
+system_prompt_path: "configs/prompts/macro_architect.md"
+
+# 接口契约与工作流上下文绑定
+applicable_stages: 
+  - "Stage_1_WorldBuilding"
+input_keys: 
+  - "world_name"
+  - "theme_input"
+  - "genre_tags"
+output_schema_name: "MacroWorldSchema"  # 对应代码中的 Pydantic 校验模型
+
+# 用户交互模版（轻量级结构化留存，亦可抽离）
+user_prompt_templates:
+  generate: >
+    [上下文 | CONTEXT]
+    项目代号/世界名称: {world_name}
+    核心主题倾向: {theme_input}
+    题材标签组合: {genre_tags}
+
+    [执行指令 | EXECUTE]
+    请基于以上输入，先进行核心爽点与矛盾推演，随后构筑世界的宏观三维矩阵（哲学内核、历史厚度、成长逻辑）。
+  
+  refine: >
+    [质检反馈 | CONTEXT]
+    当前生成的宏观设定未通过质检：{feedback}
+
+    [执行指令 | EXECUTE]
+    请针对上述硬性质检反馈进行精准重构。

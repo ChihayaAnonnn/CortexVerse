@@ -11,8 +11,8 @@ from cortexverse.agents.factory.registry import SCHEMA_REGISTRY
 from cortexverse.agents.factory.rendering import render_prompt
 from cortexverse.infrastructure.llm_clients.factory import LLMClientFactory
 
-_DEFAULT_CONFIG = Path(__file__).resolve().parents[3] / "config" / "agents.yaml"
-_DEFAULT_PROVIDERS_PATH = Path(__file__).resolve().parents[3] / "config" / "llm_providers.yaml"
+_DEFAULT_CONFIG = Path(__file__).resolve().parents[3] / "configs" / "agents" / "agents.yaml"
+_DEFAULT_PROVIDERS_PATH = Path(__file__).resolve().parents[3] / "configs" / "llm_providers.yaml"
 
 
 class CortexAgent:
