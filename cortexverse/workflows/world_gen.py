@@ -11,7 +11,7 @@ from cortexverse.agents import _schema_bindings  # noqa: F401
 from cortexverse.domain.world.macro import MacroState
 from cortexverse.domain.world.micro import ConflictState, EconomyState, GeographyState
 from cortexverse.domain.world.world_asset import WorldAsset
-from cortexverse.infrastructure.agent_factory.factory import AgentFactory
+from cortexverse.agents.factory.factory import AgentFactory
 
 MAX_REFINE = 3
 

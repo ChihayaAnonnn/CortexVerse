@@ -7,8 +7,8 @@ import instructor
 import yaml
 from loguru import logger
 
-from cortexverse.infrastructure.agent_factory.registry import SCHEMA_REGISTRY
-from cortexverse.infrastructure.agent_factory.rendering import render_prompt
+from cortexverse.agents.factory.registry import SCHEMA_REGISTRY
+from cortexverse.agents.factory.rendering import render_prompt
 from cortexverse.infrastructure.llm_clients.factory import LLMClientFactory
 
 _DEFAULT_CONFIG = Path(__file__).resolve().parents[3] / "config" / "agents.yaml"

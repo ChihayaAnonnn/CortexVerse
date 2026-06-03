@@ -88,7 +88,7 @@ async def generate_world_stream(request: WorldGenerateRequest):
             from cortexverse.domain.world.macro import MacroState
             from cortexverse.domain.world.micro import ConflictState, EconomyState, GeographyState
             from cortexverse.domain.world.world_asset import WorldAsset
-            from cortexverse.infrastructure.agent_factory.factory import AgentFactory
+            from cortexverse.agents.factory.factory import AgentFactory
             from cortexverse.workflows.world_gen import MAX_REFINE, _run_with_refine, _validate_conflict_refs
 
             factory = AgentFactory.from_config()

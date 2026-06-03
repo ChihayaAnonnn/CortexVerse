@@ -37,12 +37,15 @@ CortexVerse/
 │   └── llm_providers.yaml       # LLM Provider 配置（type、base_url、api_key_env）
 ├── cortexverse/
 │   ├── domain/                  # 纯数据层 — Pydantic 模型，不含业务逻辑
+│   │   ├── agent/               #   Agent 领域模型子包
+│   │   │   └── metadata.py      #     AgentMetadata（身份、能力画像、执行配置）
 │   │   └── world/               #   世界观领域模型子包
 │   │       ├── macro.py         #     MacroState（Philosophy、History、Growth）
 │   │       ├── micro.py         #     MicroFaction/Character/Resource/Conflict/PowerTier/Location
 │   │       └── world_asset.py   #     WorldAsset 聚合根 + 关系校验
 │   ├── agents/
 │   │   ├── _schema_bindings.py  # Schema 注册声明（导入即注册到 SCHEMA_REGISTRY）
+│   │   ├── factory/             # Agent 工厂（配置驱动 + Schema 注册表 + Prompt 渲染）
 │   │   ├── world_builder/
 │   │   ├── character_engine/
 │   │   ├── narrative_planner/
@@ -51,7 +54,6 @@ CortexVerse/
 │   │   ├── world_gen.py         #   世界构建编排器（含 refine 循环）
 │   │   └── episode_loop.py      #   剧集生成 Game Loop
 │   ├── infrastructure/
-│   │   ├── agent_factory/       # Agent 工厂（配置驱动 + Schema 注册表 + Prompt 渲染）
 │   │   ├── llm_clients/         # LLM 客户端工厂（BaseLLMClient → OpenAICompatibleClient）
 │   │   ├── media_adapters/      # ComfyUI/TTS 适配器（待实现）
 │   │   └── repositories/        # 数据库 Repository
