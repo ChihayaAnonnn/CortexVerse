@@ -11,7 +11,7 @@ from cortexverse.agents.factory.registry import SCHEMA_REGISTRY
 from cortexverse.agents.factory.rendering import render_prompt
 from cortexverse.infrastructure.llm_clients.factory import LLMClientFactory
 
-_DEFAULT_CONFIG = Path(__file__).resolve().parents[3] / "configs" / "agents" / "agents.yaml"
+_DEFAULT_CONFIG_DIR = Path(__file__).resolve().parents[3] / "configs" / "agents"
 _DEFAULT_PROVIDERS_PATH = Path(__file__).resolve().parents[3] / "configs" / "llm_providers.yaml"
 
 
@@ -82,13 +82,13 @@ class AgentFactory:
     @classmethod
     def from_config(
         cls,
-        config_path: str | Path | None = None,
+        config_dir: str | Path | None = None,
         providers_path: str | Path | None = None,
     ) -> "AgentFactory":
-        """加载 YAML 配置并执行启动期一致性断言。
+        """从目录加载多个 YAML 配置并执行启动期一致性断言。
 
         Args:
-            config_path: Agent 配置文件路径；默认使用包内锚定路径。
+            config_dir: Agent 配置目录路径；默认使用包内锚定路径。
             providers_path: Provider 配置文件路径；默认使用包内锚定路径。
 
         Returns:
@@ -100,9 +100,17 @@ class AgentFactory:
         # 确保 Schema 注册表在一致性断言前完成加载
         import cortexverse.agents._schema_bindings  # noqa: F401
 
-        path = Path(config_path) if config_path else _DEFAULT_CONFIG
-        with open(path, "r", encoding="utf-8") as fp:
-            configs: dict[str, Any] = yaml.safe_load(fp)
+        config_path = Path(config_dir) if config_dir else _DEFAULT_CONFIG_DIR
+        if not config_path.is_dir():
+            raise ValueError(f"Agent 配置目录不存在：{config_path}")
+
+        # 遍历目录中的所有 YAML 文件，合并配置
+        configs: dict[str, Any] = {}
+        for yaml_file in sorted(config_path.glob("*.yaml")):
+            with open(yaml_file, "r", encoding="utf-8") as fp:
+                agent_config = yaml.safe_load(fp)
+                if agent_config and "agent_id" in agent_config:
+                    configs[agent_config["agent_id"]] = agent_config
 
         # 单一事实源断言：YAML 与注册表必须严格对齐
         yaml_keys = set(configs.keys())

@@ -1,0 +1,56 @@
+# =====================================================================
+# CortexVerse SubAgent 元数据配置 - 冲突编排师
+# =====================================================================
+agent_id: "conflict_subagent"
+name: "冲突编排师"
+version: "1.0.0"
+
+# 给 Coordinator 团队编排时阅读的"履历简历"
+description: >
+  负责提取剧情矛盾、爽点事件导火索。
+  将静态数据资产转化为动态的冲突图网络。
+
+# 物理运行控制
+provider: "deepseek"
+model: "deepseek-v4-pro"
+retries: 3
+model_settings:
+  temperature: 0.7  # 提升导火索事件的戏剧性与冲突感
+  extra_body:
+    thinking:
+      type: "disabled"
+
+# 隔离出来的提示词文件路径
+system_prompt_path: "configs/prompts/conflict_subagent.md"
+
+# 接口契约与工作流上下文绑定
+applicable_stages:
+  - "Stage_1_WorldBuilding"
+input_keys:
+  - "macro_context"
+  - "geography_context"
+  - "economy_context"
+output_schema_name: "ConflictState"  # 对应代码中的 Pydantic 校验模型
+
+# 用户交互模版（轻量级结构化留存，亦可抽离）
+user_prompt_templates:
+  generate: >
+    [上下文 | CONTEXT]
+    【宏观上下文】：
+    {macro_context}
+
+    【物理地理大表】：
+    {geography_context}
+
+    【阶级经济势力表】：
+    {economy_context}
+
+    [执行指令 | EXECUTE]
+    请剖析势力与资源的利益对立，编排核心冲突节点（Conflict Nodes）。
+
+  refine: >
+    [质检反馈 | CONTEXT]
+    冲突节点关系校验失败：{feedback}
+
+    [执行指令 | EXECUTE]
+    请对照上游资产重新接线，修正不存在的势力或资源 ID。

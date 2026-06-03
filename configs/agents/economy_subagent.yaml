@@ -1,0 +1,52 @@
+# =====================================================================
+# CortexVerse SubAgent 元数据配置 - 阶级与社会精算师
+# =====================================================================
+agent_id: "economy_subagent"
+name: "阶级与社会精算师"
+version: "1.0.0"
+
+# 给 Coordinator 团队编排时阅读的"履历简历"
+description: >
+  负责社会学、阵营割据与初始角色构建。
+  在宏观法则和物理地理框架下，衍生出经济与社会系统。
+
+# 物理运行控制
+provider: "deepseek"
+model: "deepseek-v4-pro"
+retries: 3
+model_settings:
+  temperature: 0.3  # 需要极高的一致性与逻辑严密性，降低温标
+  extra_body:
+    thinking:
+      type: "disabled"
+
+# 隔离出来的提示词文件路径
+system_prompt_path: "configs/prompts/economy_subagent.md"
+
+# 接口契约与工作流上下文绑定
+applicable_stages:
+  - "Stage_1_WorldBuilding"
+input_keys:
+  - "macro_context"
+  - "geography_context"
+output_schema_name: "EconomyState"  # 对应代码中的 Pydantic 校验模型
+
+# 用户交互模版（轻量级结构化留存，亦可抽离）
+user_prompt_templates:
+  generate: >
+    [上下文 | CONTEXT]
+    【宏观上下文】：
+    {macro_context}
+
+    【地理上下文】：
+    {geography_context}
+
+    [执行指令 | EXECUTE]
+    请先推演生产力与剥削模型，然后设计该世界的社会阶层、垄断资源、割据势力和初始引子角色。
+
+  refine: >
+    [质检反馈 | CONTEXT]
+    社会经济资产未通过强类型关系校验：{feedback}
+
+    [执行指令 | EXECUTE]
+    请根据错误报告严格修正外键与数值对应关系。

@@ -1,0 +1,48 @@
+# =====================================================================
+# CortexVerse SubAgent 元数据配置 - 地理精算师
+# =====================================================================
+agent_id: "geography_subagent"
+name: "地理精算师"
+version: "1.0.0"
+
+# 给 Coordinator 团队编排时阅读的"履历简历"
+description: >
+  负责物理地图节点与 ComfyUI 视觉 Tag 生成。
+  根据世界的宏观法则，切分并构筑世界的具体物理区域节点。
+
+# 物理运行控制
+provider: "deepseek"
+model: "deepseek-v4-pro"
+retries: 3
+model_settings:
+  temperature: 0.5  # 兼顾创意与数值精确度
+  extra_body:
+    thinking:
+      type: "disabled"
+
+# 隔离出来的提示词文件路径
+system_prompt_path: "configs/prompts/geography_subagent.md"
+
+# 接口契约与工作流上下文绑定
+applicable_stages:
+  - "Stage_1_WorldBuilding"
+input_keys:
+  - "macro_context"
+output_schema_name: "GeographyState"  # 对应代码中的 Pydantic 校验模型
+
+# 用户交互模版（轻量级结构化留存，亦可抽离）
+user_prompt_templates:
+  generate: >
+    [上下文 | CONTEXT]
+    【宏观上下文】：
+    {macro_context}
+
+    [执行指令 | EXECUTE]
+    请阅读宏观设定，推演并精算生成 N 个具有代表性的地理物理节点。
+
+  refine: >
+    [质检反馈 | CONTEXT]
+    地理节点图关系校验失败或未达爽点标准：{feedback}
+
+    [执行指令 | EXECUTE]
+    请根据反馈精准修正区域节点。

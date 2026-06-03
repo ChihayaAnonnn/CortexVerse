@@ -34,8 +34,15 @@ CortexVerse 是一个系统驱动的虚拟内容生产线（Synthetic Content Pi
 CortexVerse/
 ├── configs/                     # 配置与资产层（热更新友好，禁止放 Python 代码）
 │   ├── agents/                  #   Agent 人才库的元数据定义
-│   │   └── agents.yaml          #     Agent 配置（model、provider、prompt 模板、model_settings）
+│   │   ├── macro_architect.yaml #     宏观架构师配置
+│   │   ├── geography_subagent.yaml #  地理精算师配置
+│   │   ├── economy_subagent.yaml #   阶级与社会精算师配置
+│   │   └── conflict_subagent.yaml #  冲突编排师配置
 │   ├── prompts/                 #   核心 Base System Prompts
+│   │   ├── macro_architect.md   #     宏观架构师 Prompt
+│   │   ├── geography_subagent.md #    地理精算师 Prompt
+│   │   ├── economy_subagent.md  #     阶级与社会精算师 Prompt
+│   │   └── conflict_subagent.md #     冲突编排师 Prompt
 │   └── llm_providers.yaml       #   LLM Provider 配置（type、base_url、api_key_env）
 ├── cortexverse/
 │   ├── domain/                  # 纯数据层 — Pydantic 模型，不含业务逻辑
