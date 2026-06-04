@@ -38,12 +38,11 @@ CortexVerse/
 │   │   ├── geography_subagent.yaml #  地理精算师配置
 │   │   ├── economy_subagent.yaml #   阶级与社会精算师配置
 │   │   └── conflict_subagent.yaml #  冲突编排师配置
-│   ├── prompts/                 #   核心 Base System Prompts
-│   │   ├── macro_architect.md   #     宏观架构师 Prompt
-│   │   ├── geography_subagent.md #    地理精算师 Prompt
-│   │   ├── economy_subagent.md  #     阶级与社会精算师 Prompt
-│   │   └── conflict_subagent.md #     冲突编排师 Prompt
-│   └── llm_providers.yaml       #   LLM Provider 配置（type、base_url、api_key_env）
+│   └── prompts/                 #   核心 Base System Prompts
+│       ├── macro_architect.md   #     宏观架构师 Prompt
+│       ├── geography_subagent.md #    地理精算师 Prompt
+│       ├── economy_subagent.md  #     阶级与社会精算师 Prompt
+│       └── conflict_subagent.md #     冲突编排师 Prompt
 ├── cortexverse/
 │   ├── domain/                  # 纯数据层 — Pydantic 模型，不含业务逻辑
 │   │   ├── agent/               #   Agent 领域模型子包
@@ -105,7 +104,19 @@ result = await agent.run("generate", genre_tags=["修仙"], creative_intent="...
 
 ### LLM 客户端
 
-`LLMClientFactory` 根据 `config/llm_providers.yaml` 创建 instructor 客户端，支持多 provider（OpenAI、DeepSeek 等）。API Key 从环境变量读取，客户端实例按 provider 缓存。
+`LLMClientFactory` 根据 `ConfigManager` 创建 instructor 客户端，支持多 provider（OpenAI、DeepSeek 等）。配置从环境变量读取，客户端实例按 provider 缓存。
+
+### 配置管理
+
+`ConfigManager`（单例模式）统一管理所有环境变量，包括 LLM Provider、数据库、Redis 等配置。使用方式：
+
+```python
+from cortexverse.utils.config import ConfigManager
+
+config = ConfigManager()
+api_key = config.OPENAI_API_KEY
+database_url = config.DATABASE_URL
+```
 
 ## 关键约束
 
@@ -113,7 +124,8 @@ result = await agent.run("generate", genre_tags=["修仙"], creative_intent="...
 - **禁止引入** LangChain、LangGraph、AutoGen、CrewAI；需要图路由时用 `while` + `match/case` 实现
 - 多模态一致性：角色的 `visual_seed` / `character_face_id` 必须显式传递，Media Adapter（L5）依赖这些引用维持角色一致性
 - LLM 调用统一通过 `instructor`，输出必须是符合 Pydantic schema 的 JSON
-- `config/agents.yaml` 的 key 集合必须与 `SCHEMA_REGISTRY` 严格一致，`AgentFactory.from_config()` 启动时断言
+- `configs/agents/*.yaml` 的 key 集合必须与 `SCHEMA_REGISTRY` 严格一致，`AgentFactory.from_config()` 启动时断言
+- LLM Provider 配置从环境变量读取，通过 `ConfigManager` 统一管理
 
 ## Coding Conventions
 

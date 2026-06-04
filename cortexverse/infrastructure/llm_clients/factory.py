@@ -1,15 +1,12 @@
-"""LLM 客户端工厂 — 基于 provider 配置创建 instructor 客户端。"""
+"""LLM 客户端工厂 — 基于环境变量创建 instructor 客户端。"""
 
-from pathlib import Path
 from typing import Any
 
 import instructor
-import yaml
 
 from cortexverse.infrastructure.llm_clients.base import BaseLLMClient
 from cortexverse.infrastructure.llm_clients.openai_client import OpenAICompatibleClient
-
-_DEFAULT_PROVIDERS_PATH = Path(__file__).resolve().parents[3] / "configs" / "llm_providers.yaml"
+from cortexverse.utils.config import ConfigManager
 
 # provider type → 客户端类映射
 _CLIENT_TYPES: dict[str, type[BaseLLMClient]] = {
@@ -20,33 +17,28 @@ _CLIENT_TYPES: dict[str, type[BaseLLMClient]] = {
 class LLMClientFactory:
     """LLM 客户端工厂。根据 provider 名称创建 instructor 客户端。
 
-    缓存已创建的客户端实例，避免重复创建 SDK 连接。
+    从 ConfigManager 读取配置，缓存已创建的客户端实例，避免重复创建 SDK 连接。
     """
 
-    def __init__(self, providers: dict[str, Any]) -> None:
-        self._providers = providers
+    def __init__(self, config_manager: ConfigManager) -> None:
+        self._config_manager = config_manager
         self._cache: dict[str, instructor.AsyncInstructor] = {}
 
     @classmethod
-    def from_config(cls, config_path: str | Path | None = None) -> "LLMClientFactory":
-        """加载 llm_providers.yaml 配置。
-
-        Args:
-            config_path: 配置文件路径；默认使用包内锚定路径。
+    def from_config(cls) -> "LLMClientFactory":
+        """从 ConfigManager 创建 LLMClientFactory。
 
         Returns:
             就绪的 LLMClientFactory 实例。
         """
-        path = Path(config_path) if config_path else _DEFAULT_PROVIDERS_PATH
-        with open(path, "r", encoding="utf-8") as fp:
-            providers: dict[str, Any] = yaml.safe_load(fp)
-        return cls(providers)
+        config_manager = ConfigManager()
+        return cls(config_manager)
 
     def get_client(self, provider_name: str) -> instructor.AsyncInstructor:
         """根据 provider 名称获取或创建 instructor 客户端。
 
         Args:
-            provider_name: llm_providers.yaml 中的 provider 键名。
+            provider_name: Provider 名称（如 'openai', 'deepseek'）。
 
         Returns:
             instructor.AsyncInstructor 客户端实例。
@@ -58,11 +50,8 @@ class LLMClientFactory:
         if provider_name in self._cache:
             return self._cache[provider_name]
 
-        if provider_name not in self._providers:
-            raise ValueError(f"Provider 配置错误：未找到 provider `{provider_name}`")
-
-        spec = self._providers[provider_name]
-        provider_type = spec["type"]
+        provider = self._config_manager.get_llm_provider(provider_name)
+        provider_type = provider["type"]
 
         client_class = _CLIENT_TYPES.get(provider_type)
         if client_class is None:
@@ -72,8 +61,8 @@ class LLMClientFactory:
             )
 
         client = client_class(
-            base_url=spec["base_url"],
-            api_key_env=spec["api_key_env"],
+            base_url=provider["base_url"],
+            api_key_env=provider["api_key_env"],
             provider_name=provider_name,
         )
         instructor_client = client.create_client()

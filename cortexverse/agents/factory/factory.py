@@ -12,7 +12,6 @@ from cortexverse.agents.factory.rendering import render_prompt
 from cortexverse.infrastructure.llm_clients.factory import LLMClientFactory
 
 _DEFAULT_CONFIG_DIR = Path(__file__).resolve().parents[3] / "configs" / "agents"
-_DEFAULT_PROVIDERS_PATH = Path(__file__).resolve().parents[3] / "configs" / "llm_providers.yaml"
 
 
 class CortexAgent:
@@ -83,13 +82,11 @@ class AgentFactory:
     def from_config(
         cls,
         config_dir: str | Path | None = None,
-        providers_path: str | Path | None = None,
     ) -> "AgentFactory":
         """从目录加载多个 YAML 配置并执行启动期一致性断言。
 
         Args:
             config_dir: Agent 配置目录路径；默认使用包内锚定路径。
-            providers_path: Provider 配置文件路径；默认使用包内锚定路径。
 
         Returns:
             就绪的 AgentFactory 实例。
@@ -122,8 +119,7 @@ class AgentFactory:
                 f"仅在注册表：{registry_keys - yaml_keys}"
             )
 
-        providers_config_path = Path(providers_path) if providers_path else _DEFAULT_PROVIDERS_PATH
-        client_factory = LLMClientFactory.from_config(providers_config_path)
+        client_factory = LLMClientFactory.from_config()
         return cls(configs, client_factory)
 
     def create_agent(self, agent_key: str) -> CortexAgent:
